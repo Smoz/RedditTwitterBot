@@ -8,7 +8,7 @@ import java.sql.Statement;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import Program.DataSource;
+import program.DataSource;
 import models.TwitterModel;
 
 public class DatabaseService {
@@ -22,7 +22,7 @@ public class DatabaseService {
 		try {
 			BasicDataSource ds = DataSource.getInstance().getBasicDS();
 			connection = ds.getConnection();
-			String query = "INSERT INTO `reddittwitterbot`.`redditpost` (`title`, `media`) VALUES (?, ?, ?)";
+			String query = "INSERT INTO `reddittwitterbot`.`redditpost` (`title`, `media`, `isposted`) VALUES (?, ?, ?)";
 			ps = connection.prepareStatement(query);
 			ps.setString(1, title);
 			ps.setString(2, imageUrl);
@@ -97,4 +97,32 @@ public class DatabaseService {
 		}
 	}
 
+	public boolean CheckForDuplicatePost(String imageUrl) throws SQLException {
+		Connection connection = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			BasicDataSource ds = DataSource.getInstance().getBasicDS();
+			connection = ds.getConnection();
+			String query = "SELECT media FROM reddittwitterbot.redditpost WHERE media = ?";
+			ps = connection.prepareStatement(query);
+			ps.setString(1, imageUrl);
+			
+			rs = ps.executeQuery();
+			if(rs.next()) {
+				return true;
+			}
+			
+		}
+		finally {
+			if(ps != null) {
+				ps.close();
+			}
+			if(connection != null) {
+				connection.close();
+			}
+		}
+		return false;
+	}
 }

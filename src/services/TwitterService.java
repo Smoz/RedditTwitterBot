@@ -27,4 +27,5 @@ public class TwitterService {
 		twitter.updateStatus(status);
 		in.close();
 	}
+	
 }

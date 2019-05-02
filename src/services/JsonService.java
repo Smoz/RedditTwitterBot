@@ -11,12 +11,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import json.models.RedditJsonModel;
-import json.models.RedditJsonModel.Child;
 
 public class JsonService {
 
-	
-	public void readRedditJson(String url) throws IOException {
+	// maps json to redditjsonmodel
+	public RedditJsonModel readRedditJson(String url) throws IOException {
 		RedditJsonModel rjm = new RedditJsonModel();
 		URL website = new URL(url);
 		  
@@ -29,15 +28,8 @@ public class JsonService {
 	    ObjectMapper mapper = new ObjectMapper();
 	    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 	    rjm = mapper.readValue(jsonText, RedditJsonModel.class);
-
 	    in.close();
-	     
-	    // testing if the connection is being made and the json is being read properly
-	    for (Child child : rjm.data.children) {
-	    	 if(!child.data.thumbnail.contains("self")) {
-	    		 System.out.print("true");
-	    	 }
-	     }
+	    return rjm;
 	}
 	
 	public String readJsonString(Reader rd) throws IOException {

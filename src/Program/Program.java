@@ -1,26 +1,31 @@
-package Program;
+package program;
 
-import models.TwitterModel;
-import services.DatabaseService;
-import services.TwitterService;
+import java.util.List;
+
+import json.models.RedditJsonModel;
+import models.RedditModel;
+import services.JsonService;
+import services.RedditService;
 
 public class Program {
 
 	public static void main(String[] args) throws Exception {
-		DatabaseService ds = new DatabaseService();
-		TwitterService ts = new TwitterService();
+		JsonService _jsonService = new JsonService();
+		RedditService _redditService = new RedditService();
 		
-		// get reddit post
+		// get json of subreddit
+		RedditJsonModel rjm = _jsonService.readRedditJson("https://www.reddit.com/r/popular/.json");
 		
-		// save reddit post to db
+		// get list of images from json
+		List<RedditModel> postList = _redditService.GetRedditPosts(rjm);
 		
-		// get nonposted reddit tweet
-		TwitterModel twitterModel = ds.GetNonPostedTweet();
+		// check if posts are already in database
+		List<RedditModel> newPostsList = _redditService.GetNewRedditPosts(postList);
 		
-		// post tweet
-		ts.PublishTweet(twitterModel.title, twitterModel.imageUrl);
+		// save reddit posts to db
+		if(newPostsList.size() > 0) {
+			_redditService.InsertNewRedditTweets(newPostsList);
+		}
 		
-		// update to posted reddit tweet in db
-		ds.UpdatePostedTweet(twitterModel.id);
     }
 }

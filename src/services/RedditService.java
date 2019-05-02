@@ -17,13 +17,14 @@ public class RedditService {
 		_databaseService = new DatabaseService();
 	}
 
-	// gets Reddit post 
-	public List<RedditModel> GetRedditPosts(RedditJsonModel model){
-		RedditModel redditModel = new RedditModel();
+	// maps RedditJsonModel to RedditModel
+	public List<RedditModel> GetRedditPostsFromJson(RedditJsonModel model){
+
 		List<RedditModel> redditList = new ArrayList<RedditModel>();
 		
 		for (Child child : model.data.children) {
 			if(child.data.url.contains(".jpg")) {
+				RedditModel redditModel = new RedditModel();
 				redditModel.setImageUrl(child.data.url);
 				redditModel.setTitle(child.data.title);
 				redditModel.setIsPosted(false);
@@ -36,16 +37,16 @@ public class RedditService {
 	
 	// sorts out posts that haven't been saved yet
 	public List<RedditModel> GetNewRedditPosts(List<RedditModel> postList) throws SQLException{
-		List<RedditModel> newPostList = new ArrayList<RedditModel>();
+		List<RedditModel> newPostsList = new ArrayList<RedditModel>();
 		
 		for(RedditModel model : postList) {
 			boolean isInDatabase = _databaseService.CheckForDuplicatePost(model.imageUrl);
 			if(!isInDatabase)
 			{
-				newPostList.add(model);
+				newPostsList.add(model);
 			}
 		}
-		return newPostList;
+		return newPostsList;
 		
 	}
 	

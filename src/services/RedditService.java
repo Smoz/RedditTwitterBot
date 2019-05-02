@@ -7,4 +7,9 @@ public class RedditService {
 		
 	}
 	
+	public void InsertRedditPost() {
+		// connect to db and insert post
+		
+	}
+	
 }

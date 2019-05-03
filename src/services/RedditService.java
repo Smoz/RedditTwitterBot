@@ -23,7 +23,7 @@ public class RedditService {
 		List<RedditModel> redditList = new ArrayList<RedditModel>();
 		
 		for (Child child : model.data.children) {
-			if(child.data.url.contains(".jpg")) {
+			if(child.data.url.contains(".jpg") || child.data.url.contains(".png")) {
 				RedditModel redditModel = new RedditModel();
 				redditModel.setImageUrl(child.data.url);
 				redditModel.setTitle(child.data.title);

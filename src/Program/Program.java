@@ -23,9 +23,11 @@ public class Program {
 
 		Greeting();
 
+		// search reddit for new content
+		// if no new content, go to sleep
+
 		System.out.println("Starting bot process...");
 		RedditProcess();
-		TwitterProcess();
     }
 
     public static void Greeting(){
@@ -47,7 +49,7 @@ public class Program {
 		// get reddit tweet not posted yet
 		TwitterModel twitterModel = _databaseService.GetNonPostedTweet();
 
-		if (twitterModel != null)
+		if (twitterModel.id != 0)
 		{
 			// post tweet
 			_twitterService.PublishTweet(twitterModel.title, twitterModel.imageUrl);
@@ -60,13 +62,13 @@ public class Program {
 		}
 		else
 		{
-			RedditProcess(); // program breaks here now :)
+			RedditProcess();
 		}
 
 
 	}
 
-	public static void RedditProcess() throws IOException, SQLException, InterruptedException {
+	public static void RedditProcess() throws IOException, SQLException, InterruptedException, TwitterException {
 		JsonService _jsonService = new JsonService();
 		RedditService _redditService = new RedditService();
 
@@ -81,6 +83,15 @@ public class Program {
 		List<RedditModel> newPostsList = _redditService.GetNewRedditPosts(postList);
 
 		// save reddit posts to db
-		if(newPostsList.size() > 0) _redditService.InsertNewRedditTweets(newPostsList);
+		if(newPostsList.size() > 0)
+		{
+			_redditService.InsertNewRedditTweets(newPostsList);
+			TwitterProcess();
+		}
+		else
+		{
+			TimeUnit.MINUTES.sleep(60);
+			RedditProcess();
+		}
 	}
 }
